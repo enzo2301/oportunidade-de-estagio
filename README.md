@@ -5,3 +5,4 @@ flowchart TD
     C --> D[desenvolver fiuncionalidades principais]
     D --> E[implementar integração com IA]
     E --> F[testar e validar]
+```mermaid
