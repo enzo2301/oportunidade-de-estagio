@@ -1,0 +1,153 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "45d75ceb-aa82-478e-800e-b1eeebbd0cfb",
+      "name": "When chat message received",
+      "webhookId": "201cf25d-8012-4fe8-bb69-8c8012dba4ba"
+    },
+    {
+      "parameters": {
+        "url": "https://remotive.com/api/remote-jobs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "a869bebf-e076-40ce-9ef7-98d7e4d2280b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3cd70770-326b-4937-a1bc-6939a0b109dc",
+              "leftValue": "={{$json[\"message\"].toLowerCase().includes(\"junior\")}}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "41c2ea8b-f075-4729-baa0-406cdffd1913",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "message": "Você está procurando vagas JÚNIOR! Encontrei",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "5ae4a7a0-83c8-49aa-ba10-9c7046932f93",
+      "name": "Chat",
+      "webhookId": "b24790de-db7c-4b63-a5be-012c847b2ad2"
+    },
+    {
+      "parameters": {
+        "message": "Você deve estar procurando ESTÁGIO!\nEssas vagas são ideais pra quem está começando.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        624,
+        96
+      ],
+      "id": "9b6bfa9e-4d6c-4e91-9bf5-05cd14e2c8d6",
+      "name": "Chat1",
+      "webhookId": "99e8b49c-20f4-474c-8d53-2c55fe68f2b9"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f760b7c1-1818-4142-9434-9f65dae5c6f6",
+  "meta": {
+    "instanceId": "f6228a8a9866949d587501a36197edd0bd5e784b9ae9cc4dc83d3bd32c836e09"
+  },
+  "id": "WIuVXU1qtWoXZ4sm",
+  "tags": []
+}
