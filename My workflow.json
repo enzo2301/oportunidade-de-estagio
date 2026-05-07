@@ -1,0 +1,134 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ab24c1b2-2b77-423a-977a-c4692a83d07b",
+      "name": "When chat message received",
+      "webhookId": "0a837cf5-ede3-4324-8d92-7ac44b02b341"
+    },
+    {
+      "parameters": {
+        "url": "https://remotive.com/api/remote-jobs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6894576e-afcf-42c2-9267-471c2ca80ec6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Você é um assistente especializado em vagas de estágio e emprego.\nAjude o usuário de forma prática e direta usando os dados recebidos da API.",
+              "role": "model"
+            },
+            {
+              "content": "=Estas são algumas vagas encontradas:\n{{ JSON.stringify($json.jobs).slice(0,800) }}\n\nPergunta do usuário:\n{{ $('When chat message received').item.json.message }}\n\nResponda indicando vagas relevantes de forma curta e prática."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "32eafca6-d1d2-462b-ba9d-dac408a9d2b3",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zM66eaDVjoW7AFyi",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{$json[\"content\"][\"parts\"][0][\"text\"]}}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        0
+      ],
+      "id": "25b43924-ce61-492c-a4dc-c79b9f6092ff",
+      "name": "Chat",
+      "webhookId": "a92c948a-3b12-4823-b674-c3d6dd19bcff"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "47dce76d-183d-4a99-89e4-1a7eee0e22fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a9511476c46a1af16574752cd3d65c04b2b693fb80c3bb24bd8d8993a21276fb"
+  },
+  "id": "SWqgAX7ChLKunsPs",
+  "tags": []
+}
